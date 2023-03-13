@@ -26,13 +26,10 @@ const AccountContextProvider = (props) => {
         return
       }
 
-      const provider = new ethers.providers.Web3Provider(ethereum)
       const accounts = await ethereum.request({ method: "eth_requestAccounts" })
-      const balance = await provider.getBalance(accounts[0])
 
       const payload = {
         address: accounts[0],
-        balance: Number(ethers.utils.formatEther(balance)).toFixed(3),
       }
 
       console.log(payload)
@@ -95,15 +92,12 @@ const AccountContextProvider = (props) => {
     } else {
       dispatch({ type: AccountActionTypes.SET_DISABLE_APP, payload: false })
       const accounts = await ethereum.request({ method: "eth_accounts" })
-      const provider = new ethers.providers.Web3Provider(ethereum)
 
       if (accounts.length !== 0) {
         const account = accounts[0]
-        const balance = await provider.getBalance(account)
 
         const payload = {
           address: account,
-          balance: Number(ethers.utils.formatEther(balance)).toFixed(3),
         }
         dispatch({ type: AccountActionTypes.SET_ACCOUNT, payload })
       } else {

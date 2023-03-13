@@ -3,6 +3,7 @@ import { Button, Input, Modal, Spin, Table } from "antd"
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { getBooksTableColumns } from "@/utils/helpers"
+//import { uploadJSONToIPFS, getNFTMetadata } from "@/utils/pinata"
 
 const User = () => {
   const [books, setBooks] = useState()
