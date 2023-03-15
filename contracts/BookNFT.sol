@@ -41,13 +41,18 @@ contract BookNFT is ERC721URIStorage, Ownable {
     }
 
     function getAllBookURIs() public view returns (string[] memory) {
-        string[] memory allBookURIs;
+        if (_tokenIds.current() != 0) {
+            string[] memory allBookURIs = new string[](_tokenIds.current());
 
-        for (uint256 i = 0; i < _tokenIds.current(); i++) {
-            allBookURIs[i] = tokenURI(i);
+            for (uint256 i = 0; i < _tokenIds.current(); i++) {
+                allBookURIs[i] = tokenURI(i);
+            }
+
+            return allBookURIs;
         }
 
-        return allBookURIs;
+        string[] memory emptyArr;
+        return emptyArr;
     }
 
     function getAuthorBookURIs(

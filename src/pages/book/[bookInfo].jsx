@@ -5,12 +5,18 @@ import { useEffect, useState } from "react"
 import { CheckOutlined, LockOutlined } from "@ant-design/icons"
 import { ethers } from "ethers"
 import BookAccessNFT from "../../../artifacts/contracts/BookAccessNFT.sol/BookAccessNFT.json"
-import { bookAccessNftContractAddress } from "@/utils/constants"
-import { getNFTMetadata } from "@/utils/pinata"
+import {
+  bookAccessNftContractAddress,
+  bookNftContractAddress,
+} from "@/utils/constants"
+import { getNFTMetadata, uploadJSONToIPFS } from "@/utils/pinata"
+import BookNFT from "../../../artifacts/contracts/BookNFT.sol/BookNFT.json"
 
 const Book = () => {
   const router = useRouter()
   const [book, setBook] = useState()
+  const [authorBooks, setAuthorBooks] = useState()
+  const [authorBookURIs, setAuthorBookURIs] = useState()
   const [hasAccess, setHasAccess] = useState(false)
   const [isBuying, setIsBuying] = useState(false)
 
@@ -25,7 +31,6 @@ const Book = () => {
       gasPrice: ethers.utils.parseUnits("2.0", "gwei").toHexString(),
     }
 
-    console.log(params)
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner()
 
@@ -73,10 +78,15 @@ const Book = () => {
     )
 
     try {
-      const books = await contract.getAccessedBooks(
+      const identifiers = await contract.getAccessedBooks(
         accountState.account.address
       )
-      setHasAccess(books.includes(book._id))
+
+      const bookIdentifier = `${
+        book.authorWalletAddress
+      }&${book.bookName.trim()}`
+
+      setHasAccess(identifiers.includes(bookIdentifier))
       setIsBuying(false)
     } catch (error) {
       console.error(error)
@@ -94,9 +104,14 @@ const Book = () => {
         BookAccessNFT.abi,
         signer
       )
+
+      const bookIdentifier = `${
+        book.authorWalletAddress
+      }&${book.bookName.trim()}`
+
       const transaction = await contract.mintAccessNFT(
         accountState.account.address,
-        book._id
+        bookIdentifier
       )
 
       try {
@@ -134,19 +149,43 @@ const Book = () => {
   }
 
   useEffect(() => {
-    const ipfsHash = router.query.ipfsHash
-    fetchBook(ipfsHash)
+    const bookInfo = router.query.bookInfo
+    const splitInfo = bookInfo.split(",")
+    const author = splitInfo[0]
+    const bookName = splitInfo[1]
+
+    fetchBook({ author, bookName })
   }, [])
 
-  const fetchBook = async (ipfsHash) => {
-    try {
-      const book = getNFTMetadata(ipfsHash)
+  const fetchBook = async ({ author, bookName }) => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
 
+    const contract = new ethers.Contract(
+      bookNftContractAddress,
+      BookNFT.abi,
+      provider
+    )
+
+    try {
+      const bookURIs = await contract.getAuthorBookURIs(author)
+
+      const promises = []
+
+      for (let uri of bookURIs) {
+        promises.push(getNFTMetadata(uri))
+      }
+
+      const books = await Promise.all(promises)
+      const book = books.find((book) => book.bookName === bookName)
+
+      setAuthorBookURIs(bookURIs)
+      setAuthorBooks(books)
       setBook(book)
     } catch (error) {
       console.error(error)
     }
   }
+
   useEffect(() => {
     if (book) {
       getAccessedBooksByAddress()
@@ -167,8 +206,6 @@ const Book = () => {
   const notEnoughFunds =
     parseInt(book.premiumPrice) >= parseInt(accountState?.account?.balance)
 
-  console.log(isReaderTheAuthor)
-
   return (
     <div className="my-book">
       <h2 className="my-book__title">{book.bookName}</h2>
@@ -188,7 +225,7 @@ const Book = () => {
           <h4>{`${book.premiumPrice} ICZ`}</h4>
         </div>
       )}
-      {book.chapters.length ? (
+      {book.chapters?.length ? (
         <Collapse expandIcon={() => <LockOutlined />}>
           {book.chapters.map((chapter, index) => (
             <Collapse.Panel

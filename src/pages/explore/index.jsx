@@ -1,15 +1,40 @@
 import { Spin, Table } from "antd"
 import { useEffect, useState } from "react"
 import { getBooksTableColumns } from "@/utils/helpers"
+import { ethers } from "ethers"
+import BookNFT from "../../../artifacts/contracts/BookNFT.sol/BookNFT.json"
+import { bookNftContractAddress } from "@/utils/constants"
+
+import { uploadJSONToIPFS, getNFTMetadata } from "@/utils/pinata"
 
 const Explore = () => {
   const [books, setBooks] = useState()
 
   const fetchBooks = async () => {
-    const res = await fetch("/api/getBooks")
-    const json = await res.json()
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
 
-    setBooks(json)
+    const contract = new ethers.Contract(
+      bookNftContractAddress,
+      BookNFT.abi,
+      provider
+    )
+
+    try {
+      const bookURIs = await contract.getAllBookURIs()
+      console.log(bookURIs)
+      const promises = bookURIs.map((uri) => {
+        const promise = getNFTMetadata(uri)
+        return promise
+      })
+
+      const books = await Promise.all(promises)
+
+      console.log(books)
+
+      setBooks(books)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   useEffect(() => {
