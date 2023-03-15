@@ -14,6 +14,7 @@ const User = () => {
   const [isNewBookModalOpen, setIsNewBookModalOpen] = useState(false)
   const [bookNameInput, setBookNameInput] = useState("")
   const [priceInput, setPriceInput] = useState("")
+  const [isMinting, setIsMinting] = useState(false)
 
   const { accountState, checkIfWalletIsConnected, accountDispatch } =
     useAccountContext()
@@ -28,11 +29,15 @@ const User = () => {
 
   const mintBookNft = async () => {
     checkIfWalletIsConnected(accountDispatch)
+    setIsMinting(true)
 
     const newBook = {
       bookName: bookNameInput,
       authorWalletAddress: accountState?.account?.address,
       premiumPrice: priceInput,
+      chapters: [],
+      reviewers: [],
+      rating: 0,
     }
 
     if (typeof window.ethereum !== "undefined") {
@@ -69,7 +74,7 @@ const User = () => {
           </a>
         )
         notification.open({
-          message: `You just minted the a new book as NFT!`,
+          message: `You just minted a new book as NFT!`,
           description: "Click to view transaction on Epirus",
           btn,
           placement: "bottomRight",
@@ -77,6 +82,7 @@ const User = () => {
           duration: 5,
           icon: <CheckOutlined style={{ color: "#108ee9" }} />,
         })
+        handleMintDone()
       } catch (error) {
         console.error(error)
       }
@@ -87,15 +93,17 @@ const User = () => {
     setIsNewBookModalOpen(false)
   }
 
+  const handleMintDone = () => {
+    setTimeout(() => {
+      fetchBooks()
+    }, 1000)
+    hideModal()
+    setBookNameInput("")
+    setPriceInput("")
+    setIsMinting(false)
+  }
+
   const fetchBooks = async () => {
-    /* const res = await fetch("/api/getBooks")
-    const json = await res.json()
-
-    const filteredBooks = json.filter(
-      (book) => book.authorWalletAddress === accountState?.account?.address
-    )
-
-    setBooks(filteredBooks) */
     const provider = new ethers.providers.Web3Provider(window.ethereum)
 
     const contract = new ethers.Contract(
@@ -108,13 +116,14 @@ const User = () => {
       const bookURIs = await contract.getAuthorBookURIs(
         accountState?.account?.address
       )
-      const promises = []
-
-      for (let uri of bookURIs) {
-        promises.push(getNFTMetadata(uri))
-      }
+      const promises = bookURIs.map((uri) => {
+        const promise = getNFTMetadata(uri)
+        return promise
+      })
 
       const books = await Promise.all(promises)
+
+      console.log(books)
 
       setBooks(books)
     } catch (error) {
@@ -174,6 +183,7 @@ const User = () => {
                 mintBookNft()
               }
             }}
+            loading={isMinting}
           >
             Create
           </Button>,
