@@ -59,6 +59,18 @@ export const getBooksTableColumns = (isAuthor) => {
         </Link>
       ),
     },
+    Reviews: {
+      title: () => <strong>Reviews</strong>,
+      key: "reviews",
+      dataIndex: "reviewers",
+      render: (reviews) => reviews.length,
+    },
+    Rating: {
+      title: () => <strong>Rating</strong>,
+      key: "rating",
+      dataIndex: "rating",
+      render: (rating) => (rating === 0 ? "-" : rating),
+    },
   }
 
   const newColumns = { ...columns }
