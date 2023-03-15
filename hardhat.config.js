@@ -19,6 +19,16 @@ module.exports = {
       chainId: 553,
       accounts: [`0x${process.env.PRIVATE_KEY}`],
     },
+    arcticArchive: {
+      url: `https://arctic-archive.icenetwork.io:9934/`,
+      chainId: 553,
+      accounts: [`0x${process.env.PRIVATE_KEY}`],
+    },
+    mumbai: {
+      url: `https://rpc-mumbai.maticvigil.com`,
+      chainId: 80001,
+      accounts: [`0x${process.env.PRIVATE_KEY}`],
+    },
 
     coverage: {
       url: "http://localhost:8555",

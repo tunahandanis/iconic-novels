@@ -1,8 +1,12 @@
 import { useAccountContext } from "@/context/accountContext"
+import { getNFTMetadata } from "@/utils/pinata"
 import { Button, Collapse, Input, Modal, Spin } from "antd"
 import axios from "axios"
+import { ethers } from "ethers"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
+import BookNFT from "../../../artifacts/contracts/BookNFT.sol/BookNFT.json"
+import { bookNftContractAddress } from "@/utils/constants"
 
 const MyBook = () => {
   const router = useRouter()
@@ -23,20 +27,39 @@ const MyBook = () => {
   }
 
   useEffect(() => {
-    const bookId = router.query.book_id
-    fetchBook(bookId)
+    const bookInfo = router.query.bookInfo
+    const splitInfo = bookInfo.split(",")
+    const author = splitInfo[0]
+    const bookName = splitInfo[1]
+
+    fetchBook({ author, bookName })
   }, [])
 
-  const fetchBook = async (bookId) => {
-    const res = await fetch("/api/fetchBookById", {
-      method: "POST",
-      body: JSON.stringify({
-        bookId: bookId,
-      }),
-    })
-    const json = await res.json()
+  const fetchBook = async ({ author, bookName }) => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
 
-    setBook(json)
+    const contract = new ethers.Contract(
+      bookNftContractAddress,
+      BookNFT.abi,
+      provider
+    )
+
+    try {
+      const bookURIs = await contract.getAuthorBookURIs(author)
+
+      const promises = []
+
+      for (let uri of bookURIs) {
+        promises.push(getNFTMetadata(uri))
+      }
+
+      const books = await Promise.all(promises)
+      const book = books.filter((book) => book.bookName === bookName)
+
+      setBook(book)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const insertChapter = async () => {
@@ -80,7 +103,7 @@ const MyBook = () => {
       >
         New Chapter
       </Button>
-      {book.chapters.length ? (
+      {book.chapters?.length ? (
         <Collapse className="my-book__collapse">
           {book.chapters.map((chapter, index) => (
             <Collapse.Panel

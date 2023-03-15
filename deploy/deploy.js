@@ -10,11 +10,18 @@ require("dotenv").config()
 
 async function main() {
   const BookAccessNFT = await hre.ethers.getContractFactory("BookAccessNFT")
-  const contract = await BookAccessNFT.deploy()
+  const bookAccessNftContract = await BookAccessNFT.deploy()
 
-  console.log(contract.address)
+  await bookAccessNftContract.deployed()
 
-  await contract.deployed()
+  console.log(bookAccessNftContract.address)
+
+  const BookNFT = await hre.ethers.getContractFactory("BookNFT")
+  const bookNftContract = await BookNFT.deploy()
+
+  await bookNftContract.deployed()
+
+  console.log("BookNFT:" + bookNftContract.address)
 }
 
 // We recommend this pattern to be able to use async/await everywhere

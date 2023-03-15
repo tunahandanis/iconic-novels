@@ -20,7 +20,7 @@ export const getBooksTableColumns = (isAuthor) => {
       title: () => <strong>Chapters</strong>,
       key: "chapters",
       dataIndex: "",
-      render: (row) => row.chapters.length,
+      render: (row) => row?.chapters?.length ?? "-",
     },
     Author: {
       title: () => <strong>Author</strong>,
@@ -44,10 +44,19 @@ export const getBooksTableColumns = (isAuthor) => {
     },
     Link: {
       title: () => <strong>Go To Book</strong>,
-      key: "chapters",
-      dataIndex: "_id",
-      render: (_id) => (
-        <Link href={`/${isAuthor ? "my-books" : "book"}/${_id}`}>Book</Link>
+      key: "book",
+      dataIndex: "",
+      render: (row) => (
+        <Link
+          href={{
+            pathname: `/${isAuthor ? "my-books" : "book"}/[bookInfo]`,
+            query: {
+              bookInfo: `${row?.authorWalletAddress},${row?.bookName}`,
+            },
+          }}
+        >
+          Book
+        </Link>
       ),
     },
   }
@@ -55,3 +64,7 @@ export const getBooksTableColumns = (isAuthor) => {
   const newColumns = { ...columns }
   return newColumns
 }
+
+/* href={`/${isAuthor ? "my-books" : "book"}/${
+  row?.authorWalletAddress
+}-${row?.bookName}`} */

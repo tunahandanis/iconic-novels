@@ -5,7 +5,8 @@ import { useEffect, useState } from "react"
 import { CheckOutlined, LockOutlined } from "@ant-design/icons"
 import { ethers } from "ethers"
 import BookAccessNFT from "../../../artifacts/contracts/BookAccessNFT.sol/BookAccessNFT.json"
-import { contractAddress } from "@/utils/constants"
+import { bookAccessNftContractAddress } from "@/utils/constants"
+import { getNFTMetadata } from "@/utils/pinata"
 
 const Book = () => {
   const router = useRouter()
@@ -66,7 +67,7 @@ const Book = () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
 
     const contract = new ethers.Contract(
-      contractAddress,
+      bookAccessNftContractAddress,
       BookAccessNFT.abi,
       provider
     )
@@ -89,7 +90,7 @@ const Book = () => {
       const signer = provider.getSigner()
 
       const contract = new ethers.Contract(
-        contractAddress,
+        bookAccessNftContractAddress,
         BookAccessNFT.abi,
         signer
       )
@@ -133,27 +134,24 @@ const Book = () => {
   }
 
   useEffect(() => {
-    const bookId = router.query.book_id
-    fetchBook(bookId)
+    const ipfsHash = router.query.ipfsHash
+    fetchBook(ipfsHash)
   }, [])
 
+  const fetchBook = async (ipfsHash) => {
+    try {
+      const book = getNFTMetadata(ipfsHash)
+
+      setBook(book)
+    } catch (error) {
+      console.error(error)
+    }
+  }
   useEffect(() => {
     if (book) {
       getAccessedBooksByAddress()
     }
   }, [book])
-
-  const fetchBook = async (bookId) => {
-    const res = await fetch("/api/fetchBookById", {
-      method: "POST",
-      body: JSON.stringify({
-        bookId: bookId,
-      }),
-    })
-    const json = await res.json()
-
-    setBook(json)
-  }
 
   if (!book) {
     return (
