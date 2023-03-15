@@ -1,5 +1,5 @@
 import { useAccountContext } from "@/context/accountContext"
-import { Button, Collapse, notification, Spin, Tooltip } from "antd"
+import { Button, Collapse, notification, Spin, Tooltip, Rate } from "antd"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { CheckOutlined, LockOutlined } from "@ant-design/icons"
@@ -19,8 +19,10 @@ const Book = () => {
   const [authorBookURIs, setAuthorBookURIs] = useState()
   const [hasAccess, setHasAccess] = useState(false)
   const [isBuying, setIsBuying] = useState(false)
+  const [isReviewing, setIsReviewing] = useState(false)
 
-  const { accountState } = useAccountContext()
+  const { accountState, checkIfWalletIsConnected, accountDispatch } =
+    useAccountContext()
 
   const buyAccess = async () => {
     const params = {
@@ -186,6 +188,83 @@ const Book = () => {
     }
   }
 
+  const giveReview = async (rating) => {
+    checkIfWalletIsConnected(accountDispatch)
+    setIsReviewing(true)
+
+    const bookInfo = router.query.bookInfo
+    const splitInfo = bookInfo.split(",")
+    const author = splitInfo[0]
+    const bookName = splitInfo[1]
+
+    const bookIndex = authorBooks.findIndex(
+      (book) => book.bookName === bookName
+    )
+    const oldBookURI = authorBookURIs[bookIndex]
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+
+    const contract = new ethers.Contract(
+      bookNftContractAddress,
+      BookNFT.abi,
+      signer
+    )
+
+    const newNumberOfReviewers = book.reviewers.length + 1
+
+    const updatedBookData = {
+      ...book,
+      rating: (book.rating + rating) / newNumberOfReviewers,
+      reviewers: book.reviewers.includes(accountState?.account?.address)
+        ? book.reviewers
+        : [...book.reviewers, accountState.account.address],
+    }
+
+    if (!updatedBookData) {
+      return
+    }
+
+    try {
+      const pinataResponse = await uploadJSONToIPFS(updatedBookData)
+      const transaction = await contract.updateBookURI(
+        author,
+        oldBookURI,
+        pinataResponse.ipfsHash
+      )
+      const res = await transaction.wait()
+
+      const btn = (
+        <a
+          href={"https://arctic.epirus.io/transactions/" + res.transactionHash}
+          target="_blank"
+          rel="noreferrer"
+        >
+          <span style={{ color: "#40a9ff", cursor: "pointer" }}>
+            {res.transactionHash.slice(0, 30) + "..."}
+          </span>
+        </a>
+      )
+      notification.open({
+        message: `You added a new review!`,
+        description: "Click to view transaction on Epirus",
+        btn,
+        placement: "bottomRight",
+
+        duration: 5,
+        icon: <CheckOutlined style={{ color: "#108ee9" }} />,
+      })
+
+      setTimeout(() => {
+        fetchBook({ author, bookName })
+      }, 1000)
+    } catch (e) {
+      console.error(e)
+    }
+
+    setIsReviewing(false)
+  }
+
   useEffect(() => {
     if (book) {
       getAccessedBooksByAddress()
@@ -200,31 +279,49 @@ const Book = () => {
     )
   }
 
+  const renderReviewSection = () =>
+    isReviewing ? (
+      <div className="spin-wrapper">
+        <Spin size="large" />
+      </div>
+    ) : (
+      <div className="my-book__rate">
+        <Rate onChange={giveReview} />
+      </div>
+    )
+
   const isReaderTheAuthor =
     book.authorWalletAddress === accountState?.account?.address
 
   const notEnoughFunds =
     parseInt(book.premiumPrice) >= parseInt(accountState?.account?.balance)
 
+  const alreadyReviewed = book.reviewers.includes(
+    accountState?.account?.address
+  )
+
   return (
     <div className="my-book">
       <h2 className="my-book__title">{book.bookName}</h2>
-      {!hasAccess && !isReaderTheAuthor && (
-        <div className="my-book__buy">
-          <Tooltip title={notEnoughFunds && "Not Enough Funds"}>
-            <Button
-              disabled={notEnoughFunds}
-              onClick={buyAccess}
-              loading={isBuying}
-              size="large"
-              type="primary"
-            >
-              Buy
-            </Button>
-          </Tooltip>
-          <h4>{`${book.premiumPrice} ICZ`}</h4>
-        </div>
-      )}
+      <div className="my-book__header">
+        {!hasAccess && !isReaderTheAuthor && (
+          <div className="my-book__buy">
+            <Tooltip title={notEnoughFunds && "Not Enough Funds"}>
+              <Button
+                disabled={notEnoughFunds}
+                onClick={buyAccess}
+                loading={isBuying}
+                size="large"
+                type="primary"
+              >
+                Buy
+              </Button>
+            </Tooltip>
+            <h4>{`${book.premiumPrice} ICZ`}</h4>
+          </div>
+        )}
+        {!isReaderTheAuthor && !alreadyReviewed && renderReviewSection()}
+      </div>
       {book.chapters?.length ? (
         <Collapse expandIcon={() => <LockOutlined />}>
           {book.chapters.map((chapter, index) => (

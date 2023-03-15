@@ -5,7 +5,7 @@ import { ethers } from "ethers"
 import BookNFT from "../../../artifacts/contracts/BookNFT.sol/BookNFT.json"
 import { bookNftContractAddress } from "@/utils/constants"
 
-import { uploadJSONToIPFS, getNFTMetadata } from "@/utils/pinata"
+import { getNFTMetadata } from "@/utils/pinata"
 
 const Explore = () => {
   const [books, setBooks] = useState()

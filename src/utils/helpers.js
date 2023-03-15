@@ -42,6 +42,19 @@ export const getBooksTableColumns = (isAuthor) => {
         </CopyToClipboard>
       ),
     },
+
+    Reviews: {
+      title: () => <strong>Reviews</strong>,
+      key: "reviews",
+      dataIndex: "reviewers",
+      render: (reviews) => reviews.length,
+    },
+    Rating: {
+      title: () => <strong>Rating</strong>,
+      key: "rating",
+      dataIndex: "rating",
+      render: (rating) => (rating === 0 ? "-" : rating),
+    },
     Link: {
       title: () => <strong>Go To Book</strong>,
       key: "book",
@@ -58,18 +71,6 @@ export const getBooksTableColumns = (isAuthor) => {
           Book
         </Link>
       ),
-    },
-    Reviews: {
-      title: () => <strong>Reviews</strong>,
-      key: "reviews",
-      dataIndex: "reviewers",
-      render: (reviews) => reviews.length,
-    },
-    Rating: {
-      title: () => <strong>Rating</strong>,
-      key: "rating",
-      dataIndex: "rating",
-      render: (rating) => (rating === 0 ? "-" : rating),
     },
   }
 

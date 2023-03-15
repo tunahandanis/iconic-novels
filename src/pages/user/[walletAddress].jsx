@@ -197,7 +197,11 @@ const User = () => {
         />
         <Input
           placeholder="Price for unlocking chapters in ICZ"
-          onChange={(e) => setPriceInput(e.target.value)}
+          onChange={(e) => {
+            if (Number(e.target.value)) {
+              setPriceInput(e.target.value)
+            }
+          }}
           value={priceInput}
           className="mt-1"
           size="middle"

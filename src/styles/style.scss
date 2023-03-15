@@ -137,6 +137,13 @@ MY BOOK
   margin: 0 auto;
   padding-bottom: 4em;
 
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2em;
+  }
+
   &__title {
     color: #fff;
     text-align: center;
@@ -154,7 +161,6 @@ MY BOOK
   &__buy {
     display: flex;
     align-items: center;
-    margin-bottom: 2.5em;
 
     h4 {
       color: #fff;
@@ -214,9 +220,21 @@ ANT DESIGN
   margin-left: 48px !important;
 }
 
+.ant-spin {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .ant-spin-dot {
   font-size: 45px !important;
   margin-bottom: 3em !important;
+}
+
+.spin-wrapper {
+  span {
+    margin-bottom: 0 !important;
+  }
 }
 
 .ant-spin-dot-item {
