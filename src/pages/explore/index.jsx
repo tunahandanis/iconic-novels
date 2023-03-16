@@ -29,8 +29,6 @@ const Explore = () => {
 
       const books = await Promise.all(promises)
 
-      console.log(books)
-
       setBooks(books)
     } catch (error) {
       console.error(error)

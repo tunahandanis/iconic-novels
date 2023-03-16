@@ -49,7 +49,7 @@ export const getBooksTableColumns = (isAuthor) => {
       dataIndex: "reviewers",
       render: (reviews) => reviews.length,
       sorter: {
-        compare: (a, b) => a.length - b.length,
+        compare: (a, b) => a.reviews?.length - b.reviews?.length,
         multiple: 2,
       },
     },
@@ -60,7 +60,7 @@ export const getBooksTableColumns = (isAuthor) => {
 
       render: (rating) => (rating === 0 ? "-" : rating),
       sorter: {
-        compare: (a, b) => a - b,
+        compare: (a, b) => a.rating - b.rating,
         multiple: 1,
       },
     },
