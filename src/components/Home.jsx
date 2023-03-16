@@ -11,19 +11,25 @@ const Home = () => {
   return (
     <>
       <Head>
-        <title>Novelbits</title>
-        <meta name="description" content="Novelbits Landing Page" />
+        <title>Iconic Novels | Decentralized Novel Platform</title>
+        <meta name="description" content="Iconic Novels Landing Page" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="hero">
+        <img
+          src="/assets/hero-image.jpeg"
+          alt="hero image"
+          className="hero__image"
+          loading="lazy"
+        />
         <div className="hero__text">
           <Title className="hero__title">
             Read, write and support thrilling books
           </Title>
           <p className="hero__para">
-            NovelBits is a decentralized novel-protocol that lets people read,
-            write and support books
+            Iconic Novels is a decentralized novel-protocol that lets people
+            read, write and support books
           </p>
           <div className="hero__button-container">
             <Link href="/explore">
@@ -46,12 +52,6 @@ const Home = () => {
             </Link>
           </div>
         </div>
-        <img
-          src="/assets/hero-image.jpg"
-          alt="hero image"
-          className="hero__image"
-          loading="lazy"
-        />
       </div>
     </>
   )

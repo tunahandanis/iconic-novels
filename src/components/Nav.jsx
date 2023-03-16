@@ -35,10 +35,10 @@ const Nav = () => {
         }}
         title={
           <Link href="/" className="heading">
-            NovelBits
+            Iconic Novels
           </Link>
         }
-        subTitle="Generate artwork through AI, secure it as NFT"
+        subTitle="Read, write and support thrilling books"
         extra={
           <>
             <Button
@@ -53,6 +53,10 @@ const Nav = () => {
               disabled={
                 !!accountState?.account || accountState.metamaskNotFound
               }
+              className={`connect-btn ${
+                (!!accountState?.account || accountState.metamaskNotFound) &&
+                "connect-btn-disabled"
+              }`}
             >
               {accountState.account
                 ? `${formatAccount(accountState?.account?.address)}`
@@ -63,12 +67,17 @@ const Nav = () => {
                 type="primary"
                 disabled={!accountState.account}
                 size="large"
+                className="explore-btn"
               >
                 Explore
               </Button>
             </Link>
             <Link href={`/user/${accountState?.account?.address}`}>
-              <Button disabled={!accountState.account} size="large">
+              <Button
+                disabled={!accountState.account}
+                size="large"
+                className="profile-btn"
+              >
                 Profile
               </Button>
             </Link>

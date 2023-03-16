@@ -48,6 +48,10 @@ export const getBooksTableColumns = (isAuthor) => {
       key: "reviews",
       dataIndex: "reviewers",
       render: (reviews) => reviews.length,
+      sorter: {
+        compare: (a, b) => a.length - b.length,
+        multiple: 2,
+      },
     },
     Rating: {
       title: () => <strong>Rating</strong>,

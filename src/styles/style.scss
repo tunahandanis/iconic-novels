@@ -1,4 +1,5 @@
 @import "~antd/dist/antd.css";
+$primary-color: #3fa9ff;
 
 * {
   box-sizing: border-box;
@@ -12,7 +13,7 @@ body {
       rgba(0, 0, 0, 0.8),
       rgba(0, 0, 0, 0.8)
     ),
-    url("/assets/background.jpg");
+    url("/assets/background.jpeg");
   background-position: center center;
   background-attachment: fixed;
   background-size: cover;
@@ -24,15 +25,11 @@ body {
   height: 10vh;
   padding: 1em 1em;
   background-color: transparent;
-
-  a {
-    color: #fff;
-    text-decoration: none;
-  }
 }
 
 .heading {
-  color: #000;
+  color: $primary-color !important;
+
   font-weight: 300;
   letter-spacing: 1px;
   font-size: 1.5rem;
@@ -201,7 +198,7 @@ ANT DESIGN
 
 .ant-avatar {
   img {
-    height: 35px;
+    height: 30px;
     object-fit: cover;
   }
 }
@@ -209,6 +206,11 @@ ANT DESIGN
 .ant-page-header-heading-left {
   display: flex;
   align-items: center;
+}
+
+.ant-page-header-heading-sub-title {
+  margin-top: 0.3em;
+  color: $primary-color;
 }
 
 .ant-notification-notice-description {
@@ -233,7 +235,8 @@ ANT DESIGN
 
 .spin-wrapper {
   span {
-    margin-bottom: 0 !important;
+    margin-bottom: 0.3em !important;
+    font-size: 40px !important;
   }
 }
 
@@ -258,12 +261,12 @@ HERO
   &__text {
     width: 25vw;
     padding-bottom: 7em;
-    margin-right: 7em;
+    margin-left: 7em;
   }
 
   &__image {
     height: 75vh;
-    margin-left: -1em;
+    margin-right: -1em;
     border-radius: 10px;
     box-shadow: 0 0 30px #000;
 
@@ -302,7 +305,7 @@ HERO
 
   &__button-explore {
     margin-right: 1em;
-    background-color: #3fa9ff !important;
+    background-color: $primary-color !important;
   }
 
   &__button-write {
@@ -319,5 +322,42 @@ HERO
       background-color: transparent !important;
       color: lighten(#000, 50%) !important;
     }
+  }
+}
+
+/*
+===
+NAV
+===
+*/
+
+.connect-btn {
+  background: transparent !important;
+  color: $primary-color !important;
+  border: 2px solid $primary-color !important;
+  border-radius: 7px !important;
+  font-size: 1.2rem !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.connect-btn-disabled {
+  color: lighten($primary-color, 15%) !important;
+  border: 2px solid lighten($primary-color, 15%) !important;
+}
+
+.explore-btn,
+.profile-btn {
+  color: $primary-color !important;
+  background: transparent !important;
+  border-radius: 7px;
+  border: none !important;
+  display: flex;
+  align-items: center;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: lighten($primary-color, 20%) !important;
   }
 }
