@@ -53,7 +53,12 @@ export const getBooksTableColumns = (isAuthor) => {
       title: () => <strong>Rating</strong>,
       key: "rating",
       dataIndex: "rating",
+
       render: (rating) => (rating === 0 ? "-" : rating),
+      sorter: {
+        compare: (a, b) => a - b,
+        multiple: 1,
+      },
     },
     Link: {
       title: () => <strong>Go To Book</strong>,

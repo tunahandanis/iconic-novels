@@ -320,7 +320,10 @@ const Book = () => {
             <h4>{`${book.premiumPrice} ICZ`}</h4>
           </div>
         )}
-        {!isReaderTheAuthor && !alreadyReviewed && renderReviewSection()}
+        {!isReaderTheAuthor &&
+          !alreadyReviewed &&
+          hasAccess &&
+          renderReviewSection()}
       </div>
       {book.chapters?.length ? (
         <Collapse expandIcon={() => <LockOutlined />}>
