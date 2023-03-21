@@ -1,5 +1,5 @@
 export const bookAccessNftContractAddress =
-  "0xe132389353E1ED636Aaa22A7B68C360A687Add11"
+  "0xE58B17669fE230897f8Bc6FeC9838C5EaDA93788"
 export const bookNftContractAddress =
-  "0xd7070961DD1aC724e3431Bf980717039E584A82C"
+  "0x500DEe5d7FAE5C51366d6B29eC2b2E7d652dFc57"
 export const pinataUrlPrefix = "https://gateway.pinata.cloud/ipfs/"
