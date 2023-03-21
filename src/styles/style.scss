@@ -261,7 +261,7 @@ HERO
   &__text {
     width: 25vw;
     padding-bottom: 7em;
-    margin-left: 7em;
+    margin-left: 9em;
   }
 
   &__image {
@@ -313,14 +313,16 @@ HERO
     background-color: #fff !important;
   }
 
-  &__button-disabled {
+  &__button--disabled {
     border: 2px solid lighten(#000, 50%) !important;
     color: lighten(#000, 50%) !important;
     background-color: transparent !important;
+    cursor: not-allowed;
 
     &:hover {
       background-color: transparent !important;
       color: lighten(#000, 50%) !important;
+      transform: none;
     }
   }
 }

@@ -86,7 +86,3 @@ export const getBooksTableColumns = (isAuthor) => {
   const newColumns = { ...columns }
   return newColumns
 }
-
-/* href={`/${isAuthor ? "my-books" : "book"}/${
-  row?.authorWalletAddress
-}-${row?.bookName}`} */

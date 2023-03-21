@@ -32,19 +32,25 @@ const Home = () => {
             read, write and support books
           </p>
           <div className="hero__button-container">
-            <Link href="/explore">
+            <Link href={accountState?.account ? "/explore" : "/"}>
               <button
                 className={`hero__button hero__button-explore ${
-                  !accountState.account && "hero__button-disabled"
+                  !accountState.account && "hero__button--disabled"
                 }`}
               >
                 Explore
               </button>
             </Link>
-            <Link href={`/user/${accountState?.account?.address}`}>
+            <Link
+              href={
+                accountState?.account
+                  ? `/user/${accountState?.account?.address}`
+                  : `/`
+              }
+            >
               <button
                 className={`hero__button hero__button-write ${
-                  !accountState.account && "hero__button-disabled"
+                  !accountState.account && "hero__button--disabled"
                 }`}
               >
                 Write
