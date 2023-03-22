@@ -12,7 +12,7 @@ Iconic Novels is a decentralized platform that lets authors publish their novels
 
 <img src="./public/assets/reader-diagram.png" width="750">
 
-The web application is built with **Next.js**, smart contracts written with **Solidity** and **HardHat**, backend with **Node.js**, and version control with **Git**.
+The web application is built with **Next.js**, smart contracts written with **Solidity** and **HardHat**, IPFS pinning with Pinata, and version control with **Git**.
 
 ## Challenges we ran into
 
