@@ -40,6 +40,7 @@ const Book = () => {
 
     try {
       const res = await signer.sendTransaction(params)
+      await res.wait()
 
       const btn = (
         <a
